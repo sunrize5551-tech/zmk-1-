@@ -9,6 +9,7 @@ import subprocess
 import sys
 import os
 import shutil
+import argparse
 from pathlib import Path
 
 
@@ -174,10 +175,69 @@ def copy_firmware_to_output(workspace_path, build_dir, shield_name, board_name):
         return None
 
 
+def parse_arguments():
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(
+        description='ZMK Local Build Script using Docker',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Interactive mode (default)
+  ./build.py
+  
+  # Build by index number
+  ./build.py -n 1
+  
+  # Build by shield name (partial match)
+  ./build.py -s "nice_dongle"
+  
+  # Build by board and shield
+  ./build.py -b nice_nano_v2 -s "nice_dongle dongle_display"
+  
+  # List available configurations
+  ./build.py -l
+        """
+    )
+    
+    parser.add_argument('-n', '--number', type=int, metavar='N',
+                        help='Build configuration number (1-based index)')
+    parser.add_argument('-s', '--shield', type=str, metavar='SHIELD',
+                        help='Shield name (or partial match)')
+    parser.add_argument('-b', '--board', type=str, metavar='BOARD',
+                        help='Board name (used with --shield for exact match)')
+    parser.add_argument('-l', '--list', action='store_true',
+                        help='List available build configurations and exit')
+    
+    return parser.parse_args()
+
+
+def find_build_by_criteria(builds, shield=None, board=None):
+    """Find a build configuration by shield and/or board name."""
+    matches = []
+    
+    for idx, build in enumerate(builds):
+        build_shield = build.get('shield', '')
+        build_board = build.get('board', '')
+        
+        # Check if shield matches (partial or exact)
+        shield_match = not shield or shield.lower() in build_shield.lower()
+        
+        # Check if board matches (exact)
+        board_match = not board or board.lower() == build_board.lower()
+        
+        if shield_match and board_match:
+            matches.append((idx, build))
+    
+    return matches
+
+
 def main():
     """Main entry point."""
     # Get the absolute path of the workspace (parent of manual_build)
     workspace_path = Path(__file__).parent.parent.resolve()
+
+    # Parse command-line arguments
+    args = parse_arguments()
 
     print("╔════════════════════════════════════════════╗")
     print("║   ZMK Local Build Script (Docker)          ║")
@@ -190,12 +250,54 @@ def main():
         print("Error: No build configurations found in build.yaml")
         sys.exit(1)
 
-    # Display options
-    display_build_options(builds)
+    # Handle list mode
+    if args.list:
+        display_build_options(builds)
+        sys.exit(0)
 
-    # Get user choice
-    choice = get_user_choice(len(builds))
-    selected_build = builds[choice]
+    # Determine which build to use
+    selected_build = None
+    
+    if args.number:
+        # Build by number
+        if 1 <= args.number <= len(builds):
+            selected_build = builds[args.number - 1]
+            print(f"\nSelected build #{args.number}")
+        else:
+            print(f"Error: Build number must be between 1 and {len(builds)}")
+            sys.exit(1)
+    
+    elif args.shield or args.board:
+        # Build by shield/board criteria
+        matches = find_build_by_criteria(builds, args.shield, args.board)
+        
+        if not matches:
+            print(f"Error: No build configuration found matching criteria:")
+            if args.shield:
+                print(f"  Shield: {args.shield}")
+            if args.board:
+                print(f"  Board: {args.board}")
+            print("\nAvailable configurations:")
+            display_build_options(builds)
+            sys.exit(1)
+        
+        elif len(matches) == 1:
+            idx, selected_build = matches[0]
+            print(f"\nFound matching build #{idx + 1}:")
+            print(f"  {selected_build.get('shield')} ({selected_build.get('board')})")
+        
+        else:
+            print(f"\nMultiple builds match your criteria:")
+            for idx, build in matches:
+                print(f"  {idx + 1}. {build.get('shield')} ({build.get('board')})")
+            print("\nPlease specify more precise criteria or use -n with the build number")
+            sys.exit(1)
+    
+    else:
+        # Interactive mode
+        display_build_options(builds)
+        choice = get_user_choice(len(builds))
+        selected_build = builds[choice]
 
     # Build Docker command
     docker_cmd, build_dir = build_docker_command(selected_build, workspace_path)
