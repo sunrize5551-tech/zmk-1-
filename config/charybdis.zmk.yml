@@ -10,5 +10,5 @@ features:
 siblings:
   - charybdis_left
   - charybdis_right_standalone
-  - charybdis_right_dongle
-  - prospector_dongle
+  - dongle_charybdis_right
+  - dongle_prospector
