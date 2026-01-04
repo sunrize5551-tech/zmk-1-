@@ -1,10 +1,1 @@
-/* boards/shields/charybdis/charybdis_left.overlay */
-
 #include "charybdis.dtsi"
-
-/ {
-    chosen {
-        zmk,kscan = &kscan0;
-        zmk,physical-layout = &charybdis_6col_layout;
-    };
-};
