@@ -8,8 +8,6 @@
     };
 };
 
-/* 판매자 트랙볼 핀 설정 (SCK:8, MOSI:17, CS:20) */
-/* choovick 레포는 pinctrl을 사용하므로, 여기서 핀을 재정의합니다 */
 &pinctrl {
     spi0_default: spi0_default {
         group1 {
@@ -41,9 +39,10 @@
         compatible = "pixart,pmw3610";
         reg = <0>;
         spi-max-frequency = <2000000>;
-        irq-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         
-        /* 판매자 설정 (90도 회전, 인버트 X) */
+        /* [수정 완료] irq-gpios -> motion-gpios 이름 변경 (핀 번호 6번 유지) */
+        motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        
         rotate-90;
         invert-x;
     };
