@@ -1,6 +1,7 @@
 /* boards/shields/charybdis/charybdis_right_standalone.overlay */
 
 #include "charybdis.dtsi"
+/* 헤더 파일 필수 */
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
@@ -9,6 +10,7 @@
         zmk,physical-layout = &charybdis_6col_layout;
     };
 
+    /* Standalone용 리스너 */
     trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
@@ -52,8 +54,8 @@
         rotate-90;
         invert-x;
 
-        /* [수정] zephyr,axis-x 삭제하고 다시 기본으로 복귀 */
-        /* ZMK Input Listener가 처리하도록 유도 */
+        /* [수정] zephyr,axis-x / axis-y 삭제! */
+        /* 오직 이것만 남겨서 ZMK가 알아서 처리하게 함 */
         evt-type = <EV_REL>;
         input-codes = <REL_X REL_Y>;
     };
