@@ -1,5 +1,7 @@
-/* boards/shields/charybdis/charybdis_right_standalone.overlay */
+/* boards/shields/charybdis/dongle_charybdis_right.overlay */
 #include "charybdis.dtsi"
+/* [핵심] 이 줄이 없으면 REL_X, REL_Y를 못 알아먹어서 에러가 납니다! */
+#include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
     chosen {
@@ -7,12 +9,14 @@
         zmk,physical-layout = &charybdis_6col_layout;
     };
 
+    /* 트랙볼 리스너 (최신 Choovick 방식) */
     trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
     };
 };
 
+/* 핀 설정 (판매자 핀맵 적용) */
 &pinctrl {
     spi0_default: spi0_default {
         group1 {
@@ -45,16 +49,15 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         
-        /* 핀 설정 */
+        /* 핀 설정 (판매자: 6번) */
         motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         
-        /* 판매자 설정 */
+        /* 판매자 설정 (회전) */
         rotate-90;
         invert-x;
 
-        /* [수정 완료] 영어를 빼고 기계어(숫자)를 직접 입력 */
-        /* EV_REL(0x02) / REL_X(0x00) REL_Y(0x01) */
-        evt-type = <0x02>;
-        input-codes = <0x00 0x01>;
+        /* Zephyr 입력 설정 */
+        evt-type = <EV_REL>;
+        input-codes = <REL_X REL_Y>;
     };
 };
