@@ -4,13 +4,7 @@
 #include <physical_layouts.dtsi>
 
 / {
-    chosen {
-        zmk,kscan = &kscan0;
-        zmk,matrix-transform = &default_transform;
-        zmk,physical-layout = &charybdis_6col_layout;
-    };
-
-    /* [1] 판매자(Vzhao) 핀맵 적용 */
+    /* 1. 핀 설정 (판매자 Vzhao 족보) */
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
         label = "KSCAN";
@@ -34,7 +28,7 @@
             ;
     };
 
-    /* [2] 매트릭스 변환 */
+    /* 2. 매트릭스 변환 */
     default_transform: keymap_transform_0 {
         compatible = "zmk,matrix-transform";
         columns = <12>;
@@ -48,14 +42,13 @@
         >;
     };
 
-    /* [3] ZMK Studio용 물리적 레이아웃 정의 (이게 없어서 에러 났음) */
+    /* 3. 물리적 레이아웃 (ZMK Studio 필수) */
     charybdis_6col_layout: charybdis_6col_layout {
         compatible = "zmk,physical-layout";
         display-name = "Charybdis";
         transform = <&default_transform>;
         kscan = <&kscan0>;
         
-        /* 키보드 알알이 좌표값 (필수) */
         keys
             = <&key_physical_attrs 100 100    0   38       0     0     0>
             , <&key_physical_attrs 100 100  100   38       0     0     0>
@@ -84,4 +77,46 @@
             , <&key_physical_attrs 100 100 1400  138       0     0     0>
 
             , <&key_physical_attrs 100 100    0  238       0     0     0>
-            , <&key_physical_attrs 100 100  100  238       0     
+            , <&key_physical_attrs 100 100  100  238       0     0     0>
+            , <&key_physical_attrs 100 100  200  212       0     0     0>
+            , <&key_physical_attrs 100 100  300  200       0     0     0>
+            , <&key_physical_attrs 100 100  400  212       0     0     0>
+            , <&key_physical_attrs 100 100  500  212       0     0     0>
+            , <&key_physical_attrs 100 100  900  212       0     0     0>
+            , <&key_physical_attrs 100 100 1000  212       0     0     0>
+            , <&key_physical_attrs 100 100 1100  200       0     0     0>
+            , <&key_physical_attrs 100 100 1200  212       0     0     0>
+            , <&key_physical_attrs 100 100 1300  238       0     0     0>
+            , <&key_physical_attrs 100 100 1400  238       0     0     0>
+
+            , <&key_physical_attrs 100 100    0  338       0     0     0>
+            , <&key_physical_attrs 100 100  100  338       0     0     0>
+            , <&key_physical_attrs 100 100  200  312       0     0     0>
+            , <&key_physical_attrs 100 100  300  300       0     0     0>
+            , <&key_physical_attrs 100 100  400  312       0     0     0>
+            , <&key_physical_attrs 100 100  500  312       0     0     0>
+            , <&key_physical_attrs 100 100  900  312       0     0     0>
+            , <&key_physical_attrs 100 100 1000  312       0     0     0>
+            , <&key_physical_attrs 100 100 1100  300       0     0     0>
+            , <&key_physical_attrs 100 100 1200  312       0     0     0>
+            , <&key_physical_attrs 100 100 1300  338       0     0     0>
+            , <&key_physical_attrs 100 100 1400  338       0     0     0>
+
+            , <&key_physical_attrs 100 100  518  420    1500   398   790>
+            , <&key_physical_attrs 100 100  482  520    1500   398   790>
+            , <&key_physical_attrs 100 100  348  414    900    398   790>
+            , <&key_physical_attrs 100 100  418  414    1500   398   790>
+            , <&key_physical_attrs 100 100  382  514    1500   398   790>
+            , <&key_physical_attrs 100 100 1052  520 (-3000)  1102   790>
+            , <&key_physical_attrs 100 100 1067  414 (-1500)  1102   790>
+            , <&key_physical_attrs 100 100 1052  420 (-3000)  1102   790>
+            ;
+    };
+
+    /* 4. 최종 선택 (Chosen) - 여기에 다 모았습니다 */
+    chosen {
+        zmk,kscan = &kscan0;
+        zmk,matrix-transform = &default_transform;
+        zmk,physical-layout = &charybdis_6col_layout;
+    };
+};
