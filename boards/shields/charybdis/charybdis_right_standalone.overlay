@@ -1,6 +1,5 @@
 /* boards/shields/charybdis/charybdis_right_standalone.overlay */
 #include "charybdis.dtsi"
-#include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
     chosen {
@@ -8,7 +7,6 @@
         zmk,physical-layout = &charybdis_6col_layout;
     };
 
-    /* [핵심] 트랙볼 입력 처리기 (이게 없어서 에러 났음) */
     trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
@@ -53,9 +51,10 @@
         /* 판매자 설정 */
         rotate-90;
         invert-x;
-        
-        /* Zephyr 축 설정 (필수) */
-        evt-type = <EV_REL>;
-        input-codes = <REL_X REL_Y>;
+
+        /* [수정 완료] 영어를 빼고 기계어(숫자)를 직접 입력 */
+        /* EV_REL(0x02) / REL_X(0x00) REL_Y(0x01) */
+        evt-type = <0x02>;
+        input-codes = <0x00 0x01>;
     };
 };
