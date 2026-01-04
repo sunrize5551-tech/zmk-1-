@@ -4,7 +4,12 @@
 #include <physical_layouts.dtsi>
 
 / {
-    /* 1. 핀 설정 (판매자 Vzhao 족보) */
+    chosen {
+        zmk,kscan = &kscan0;
+        zmk,matrix-transform = &default_transform;
+        zmk,physical-layout = &charybdis_6col_layout;
+    };
+
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
         label = "KSCAN";
@@ -28,7 +33,6 @@
             ;
     };
 
-    /* 2. 매트릭스 변환 */
     default_transform: keymap_transform_0 {
         compatible = "zmk,matrix-transform";
         columns = <12>;
@@ -42,7 +46,6 @@
         >;
     };
 
-    /* 3. 물리적 레이아웃 (ZMK Studio 필수) */
     charybdis_6col_layout: charybdis_6col_layout {
         compatible = "zmk,physical-layout";
         display-name = "Charybdis";
@@ -111,12 +114,5 @@
             , <&key_physical_attrs 100 100 1067  414 (-1500)  1102   790>
             , <&key_physical_attrs 100 100 1052  420 (-3000)  1102   790>
             ;
-    };
-
-    /* 4. 최종 선택 (Chosen) - 여기에 다 모았습니다 */
-    chosen {
-        zmk,kscan = &kscan0;
-        zmk,matrix-transform = &default_transform;
-        zmk,physical-layout = &charybdis_6col_layout;
     };
 };
