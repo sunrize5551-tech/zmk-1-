@@ -1,6 +1,7 @@
 /* boards/shields/charybdis/dongle_charybdis_right.overlay */
 
 #include "charybdis.dtsi"
+/* 헤더 파일 필수 */
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
@@ -9,7 +10,7 @@
         zmk,physical-layout = &charybdis_6col_layout;
     };
 
-    /* 동글 모드는 Split 사용 */
+    /* Dongle용 Split */
     input_split: input_split {
         compatible = "zmk,input-split";
         device = <&trackball>;
@@ -53,7 +54,7 @@
         rotate-90;
         invert-x;
 
-        /* [수정] zephyr,axis-x 삭제하고 다시 기본으로 복귀 */
+        /* [수정] zephyr,axis-x / axis-y 삭제! */
         evt-type = <EV_REL>;
         input-codes = <REL_X REL_Y>;
     };
