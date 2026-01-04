@@ -1,5 +1,6 @@
 /* boards/shields/charybdis/charybdis_right_standalone.overlay */
 #include "charybdis.dtsi"
+#include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
     chosen {
@@ -40,9 +41,9 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         
-        /* [수정 완료] irq-gpios -> motion-gpios 이름 변경 (핀 번호 6번 유지) */
         motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         
+        /* 판매자 설정 */
         rotate-90;
         invert-x;
     };
