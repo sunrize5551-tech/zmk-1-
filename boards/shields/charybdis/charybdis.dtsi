@@ -4,35 +4,35 @@
 #include <physical_layouts.dtsi>
 
 / {
-    chosen {
-        zmk,kscan = &kscan0;
-        zmk,matrix-transform = &default_transform;
-        zmk,physical-layout = &charybdis_6col_layout;
-    };
-
+    /* 1. 판매자 핀맵 (Raw GPIO 적용 & row2col) */
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
         label = "KSCAN";
-        diode-direction = "col2row";
+        
+        /* [중요] 판매자는 row2col을 씁니다! */
+        diode-direction = "row2col";
 
+        /* 판매자 Row Pins: 31, 1.15, 24, 22, 1.06 */
         row-gpios
-            = <&pro_micro 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&pro_micro 5 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&pro_micro 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&pro_micro 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&pro_micro 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            = <&gpio0 31 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&gpio1 15 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&gpio0 24 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&gpio0 22 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&gpio1 6  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
             ;
 
+        /* 판매자 Col Pins: 0.02, 0.29, 0.09, 1.00, 0.11, 1.04 */
         col-gpios
-            = <&pro_micro 19 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 18 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 15 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 14 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 16 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 10 GPIO_ACTIVE_HIGH>
+            = <&gpio0 2  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&gpio0 29 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&gpio0 9  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&gpio1 0  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&gpio0 11 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&gpio1 4  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
             ;
     };
 
+    /* 2. 매트릭스 변환 */
     default_transform: keymap_transform_0 {
         compatible = "zmk,matrix-transform";
         columns = <12>;
@@ -46,6 +46,7 @@
         >;
     };
 
+    /* 3. 물리적 레이아웃 (ZMK Studio용) */
     charybdis_6col_layout: charybdis_6col_layout {
         compatible = "zmk,physical-layout";
         display-name = "Charybdis";
@@ -65,7 +66,6 @@
             , <&key_physical_attrs 100 100 1200   12       0     0     0>
             , <&key_physical_attrs 100 100 1300   38       0     0     0>
             , <&key_physical_attrs 100 100 1400   38       0     0     0>
-
             , <&key_physical_attrs 100 100    0  138       0     0     0>
             , <&key_physical_attrs 100 100  100  138       0     0     0>
             , <&key_physical_attrs 100 100  200  112       0     0     0>
@@ -78,7 +78,6 @@
             , <&key_physical_attrs 100 100 1200  112       0     0     0>
             , <&key_physical_attrs 100 100 1300  138       0     0     0>
             , <&key_physical_attrs 100 100 1400  138       0     0     0>
-
             , <&key_physical_attrs 100 100    0  238       0     0     0>
             , <&key_physical_attrs 100 100  100  238       0     0     0>
             , <&key_physical_attrs 100 100  200  212       0     0     0>
@@ -91,7 +90,6 @@
             , <&key_physical_attrs 100 100 1200  212       0     0     0>
             , <&key_physical_attrs 100 100 1300  238       0     0     0>
             , <&key_physical_attrs 100 100 1400  238       0     0     0>
-
             , <&key_physical_attrs 100 100    0  338       0     0     0>
             , <&key_physical_attrs 100 100  100  338       0     0     0>
             , <&key_physical_attrs 100 100  200  312       0     0     0>
@@ -104,7 +102,6 @@
             , <&key_physical_attrs 100 100 1200  312       0     0     0>
             , <&key_physical_attrs 100 100 1300  338       0     0     0>
             , <&key_physical_attrs 100 100 1400  338       0     0     0>
-
             , <&key_physical_attrs 100 100  518  420    1500   398   790>
             , <&key_physical_attrs 100 100  482  520    1500   398   790>
             , <&key_physical_attrs 100 100  348  414    900    398   790>
@@ -114,5 +111,12 @@
             , <&key_physical_attrs 100 100 1067  414 (-1500)  1102   790>
             , <&key_physical_attrs 100 100 1052  420 (-3000)  1102   790>
             ;
+    };
+
+    /* 4. 최종 선택 (Chosen) */
+    chosen {
+        zmk,kscan = &kscan0;
+        zmk,matrix-transform = &default_transform;
+        zmk,physical-layout = &charybdis_6col_layout;
     };
 };
