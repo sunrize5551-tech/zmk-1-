@@ -1,20 +1,11 @@
-/*
- * Copyright (c) 2024 The ZMK Contributors
- * SPDX-License-Identifier: MIT
- * 
- * Charybdis right keyboard - Standalone mode (acts as central)
- * Processes trackball input locally
- */
-
-#include "charybdis_right_common.dtsi"
-#include "charybdis_trackball_processors.dtsi"
+/* boards/shields/charybdis/charybdis_right_standalone.overlay */
 
 / {
-    trackball_listener: trackball_listener {
-        compatible = "zmk,input-listener";
-        status = "okay";
-        device = <&trackball>;
-
-        CHARYBDIS_TRACKBALL_PROCESSORS
+    chosen {
+        zmk,kscan = &kscan0;
+        zmk,physical-layout = &charybdis_6col_layout;
     };
 };
+
+/* 오른쪽 키보드는 왼쪽과 핀 배열이 대칭이므로 col-gpios 순서를 뒤집거나 조정할 필요가 있을 수 있음.
+   일단 위에서 정의한 kscan0를 그대로 사용. */
