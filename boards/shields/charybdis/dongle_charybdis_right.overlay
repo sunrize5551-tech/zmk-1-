@@ -1,40 +1,61 @@
+/* boards/shields/charybdis/charybdis_right_standalone.overlay */
 #include "charybdis.dtsi"
+#include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
     chosen {
-        zmk,kscan = &mock_kscan;
-        zephyr,display = &oled;
+        zmk,kscan = &kscan0;
+        zmk,physical-layout = &charybdis_6col_layout;
     };
 
-    mock_kscan: mock_kscan {
-        compatible = "zmk,kscan-mock";
-        columns = <0>;
-        rows = <0>;
-        events = <0>;
+    /* [핵심] 트랙볼 입력 처리기 (이게 없어서 에러 났음) */
+    trackball_listener {
+        compatible = "zmk,input-listener";
+        device = <&trackball>;
     };
 };
 
-&kscan0 {
-    status = "disabled";
+&pinctrl {
+    spi0_default: spi0_default {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 17)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 17)>;
+        };
+    };
+    spi0_sleep: spi0_sleep {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 17)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 17)>;
+            low-power-enable;
+        };
+    };
 };
 
 &spi0 {
-    status = "disabled";
-};
-
-&pro_micro_i2c {
     status = "okay";
-    oled: sh1106@3c {
-        compatible = "sinowealth,sh1106";
-        reg = <0x3c>;
-        width = <128>;
-        height = <64>;
-        segment-offset = <2>;
-        page-offset = <0>;
-        display-offset = <0>;
-        multiplex-ratio = <63>;
-        segment-remap;
-        com-invdir;
-        prechargep = <0x22>;
+    compatible = "nordic,nrf-spim";
+    pinctrl-0 = <&spi0_default>;
+    pinctrl-1 = <&spi0_sleep>;
+    pinctrl-names = "default", "sleep";
+    cs-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
+
+    trackball: trackball@0 {
+        status = "okay";
+        compatible = "pixart,pmw3610";
+        reg = <0>;
+        spi-max-frequency = <2000000>;
+        
+        /* 핀 설정 */
+        motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        
+        /* 판매자 설정 */
+        rotate-90;
+        invert-x;
+        
+        /* Zephyr 축 설정 (필수) */
+        evt-type = <EV_REL>;
+        input-codes = <REL_X REL_Y>;
     };
 };
