@@ -1,15 +1,40 @@
-#include "dongle_common.dtsi"
+--- a/boards/shields/charybdis/dongle_nice_common.dtsi
++++ b/boards/shields/charybdis/dongle_nice_common.dtsi
+@@ -1,3 +1,28 @@
+ #include "dongle_common.dtsi"
 
-/ {
-	kscan0: kscan {
-		compatible = "zmk,kscan-gpio-direct";
-		label = "KSCAN";
-		input-gpios = <&pro_micro 0 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-	};
-};
-
-// I2C for OLED on nice!nano
-&pro_micro_i2c {
-	status = "okay";
-};
-
++/ {
++    /* nothing */
++};
++
++/* Override dongle OLED I2C pins:
++ *   SDA = P0.17
++ *   SCL = P0.20
++ */
++&pinctrl {
++    i2c_oled_default: i2c_oled_default {
++        group1 {
++            psels = <NRF_PSEL(TWIM_SDA, 0, 17)>,
++                    <NRF_PSEL(TWIM_SCL, 0, 20)>;
++        };
++    };
++    i2c_oled_sleep: i2c_oled_sleep {
++        group1 {
++            psels = <NRF_PSEL(TWIM_SDA, 0, 17)>,
++                    <NRF_PSEL(TWIM_SCL, 0, 20)>;
++            low-power-enable;
++        };
++    };
++};
++
+ / {
+ 	kscan0: kscan {
+ 		compatible = "zmk,kscan-gpio-direct";
+@@ -11,6 +36,10 @@
+ // I2C for OLED on nice!nano
+ &pro_micro_i2c {
+ 	status = "okay";
++    pinctrl-0 = <&i2c_oled_default>;
++    pinctrl-1 = <&i2c_oled_sleep>;
++    pinctrl-names = "default", "sleep";
+ };
