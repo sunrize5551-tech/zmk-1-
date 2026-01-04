@@ -1,7 +1,6 @@
-/* boards/shields/charybdis/dongle_charybdis_right.overlay */
+/* boards/shields/charybdis/charybdis_right_standalone.overlay */
 
 #include "charybdis.dtsi"
-/* 헤더 파일 필수 */
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
@@ -10,13 +9,14 @@
         zmk,physical-layout = &charybdis_6col_layout;
     };
 
-    /* Dongle용 Split */
-    input_split: input_split {
-        compatible = "zmk,input-split";
+    /* [드라이버 공식] 트랙볼 리스너 */
+    trackball_listener {
+        compatible = "zmk,input-listener";
         device = <&trackball>;
     };
 };
 
+/* [드라이버 공식] 핀 컨트롤러 설정 */
 &pinctrl {
     spi0_default: spi0_default {
         group1 {
@@ -49,13 +49,14 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         
+        /* 판매자 하드웨어 핀 (6번) */
         motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         
+        /* 판매자 하드웨어 방향 설정 */
         rotate-90;
         invert-x;
-
-        /* [수정] zephyr,axis-x / axis-y 삭제! */
-        evt-type = <EV_REL>;
-        input-codes = <REL_X REL_Y>;
+        
+        /* [드라이버 공식] 스크롤 레이어 설정 (필수 아님, 에러 방지용) */
+        /* scroll-layers = <1>; */
     };
 };
