@@ -1,11 +1,14 @@
 /* boards/shields/charybdis/charybdis_right_standalone.overlay */
 
+/* [중요] 부모 파일(charybdis.dtsi)을 불러와야 kscan0가 누군지 알 수 있습니다! */
+#include "charybdis.dtsi"
+
 / {
     chosen {
         zmk,kscan = &kscan0;
+        /* charybdis.dtsi에서 정의한 레이아웃 이름 사용 */
         zmk,physical-layout = &charybdis_6col_layout;
     };
 };
 
-/* 오른쪽 키보드는 왼쪽과 핀 배열이 대칭이므로 col-gpios 순서를 뒤집거나 조정할 필요가 있을 수 있음.
-   일단 위에서 정의한 kscan0를 그대로 사용. */
+/* 오른쪽 키보드 전용 설정이 필요하다면 여기에 추가 (일단은 기본값 사용) */
