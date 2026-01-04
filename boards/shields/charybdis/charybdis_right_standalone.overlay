@@ -1,7 +1,6 @@
 /* boards/shields/charybdis/charybdis_right_standalone.overlay */
 
-#include "charybdis_right_common.dtsi"
-#include "charybdis_trackball_processors.dtsi"
+#include "charybdis.dtsi"
 
 / {
     chosen {
@@ -9,12 +8,61 @@
         zmk,physical-layout = &charybdis_6col_layout;
     };
 
-    trackball_listener: trackball_listener {
+    /* [Standalone 모드용] 직접 트랙볼 신호를 받음 */
+    input_rel_x: input_rel_x {
+        #input-axis-cells = <0>;
+        compatible = "zephyr,input-axis-rel";
+        axis = <0>;
+    };
+
+    input_rel_y: input_rel_y {
+        #input-axis-cells = <0>;
+        compatible = "zephyr,input-axis-rel";
+        axis = <1>;
+    };
+
+    trackball_listener {
         compatible = "zmk,input-listener";
-        status = "okay";
         device = <&trackball>;
-        
-        /* 트랙볼 프로세서 매크로 사용 (원본과 동일) */
-        CHARYBDIS_TRACKBALL_PROCESSORS
+    };
+};
+
+/* 핀 설정 (공통) */
+&pinctrl {
+    spi0_default: spi0_default {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 17)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 17)>;
+        };
+    };
+    spi0_sleep: spi0_sleep {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 17)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 17)>;
+            low-power-enable;
+        };
+    };
+};
+
+&spi0 {
+    status = "okay";
+    compatible = "nordic,nrf-spim";
+    pinctrl-0 = <&spi0_default>;
+    pinctrl-1 = <&spi0_sleep>;
+    pinctrl-names = "default", "sleep";
+    cs-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
+
+    trackball: trackball@0 {
+        status = "okay";
+        compatible = "pixart,pmw3610";
+        reg = <0>;
+        spi-max-frequency = <2000000>;
+        motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        rotate-90;
+        invert-x;
+        zephyr,axis-x = <&input_rel_x>;
+        zephyr,axis-y = <&input_rel_y>;
     };
 };
