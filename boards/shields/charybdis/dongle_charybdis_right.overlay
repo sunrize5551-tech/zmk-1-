@@ -1,12 +1,10 @@
-/* boards/shields/charybdis/dongle_charybdis_right.overlay */
-
 #include "charybdis.dtsi"
 
 / {
     chosen {
         zmk,kscan = &mock_kscan;
-        zmk,physical-layout = &charybdis_6col_layout;
         zephyr,display = &oled;
+        /* physical-layout은 dtsi에서 가져오므로 생략 가능 */
     };
 
     mock_kscan: mock_kscan {
@@ -17,7 +15,7 @@
     };
 };
 
-/* 비활성화 설정 */
+/* dtsi에 있는 kscan0와 spi0를 비활성화 (동글 과부하 방지) */
 &kscan0 {
     status = "disabled";
 };
