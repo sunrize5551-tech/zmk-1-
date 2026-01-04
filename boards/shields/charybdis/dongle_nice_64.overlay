@@ -1,27 +1,46 @@
-#include "dongle_nice_common.dtsi"
+/* boards/shields/charybdis/dongle_nice_64.overlay */
+#include <dt-bindings/zmk/matrix_transform.h>
+#include "charybdis.dtsi"
 
 / {
-	chosen {
-		zephyr,display = &oled;
-	};
+    chosen {
+        zmk,kscan = &mock_kscan;
+        zmk,matrix-transform = &default_transform;
+        zmk,physical-layout = &charybdis_6col_layout;
+        zephyr,display = &oled;
+    };
+
+    mock_kscan: mock_kscan {
+        compatible = "zmk,kscan-mock";
+        columns = <0>;
+        rows = <0>;
+        events = <0>;
+    };
 };
 
-// I2C for OLED on nice!nano
+/* [중요] 동글이 키보드/트랙볼 찾다가 뻗지 않게 강제 비활성화 */
+&kscan0 {
+    status = "disabled";
+};
+
+&spi0 {
+    status = "disabled";
+};
+
+/* 1.3인치 화면(SH1106) 설정 */
 &pro_micro_i2c {
-	oled: ssd1306@3c {
-		compatible = "solomon,ssd1306fb";
-		reg = <0x3c>;
-		width = <128>;
-		height = <64>;
-		segment-offset = <0>;
-		page-offset = <0>;
-		display-offset = <0>;
-		multiplex-ratio = <63>;
-		prechargep = <0x22>;
-		// vertical mirror
-		com-invdir;
-		// horizontal mirror
-		segment-remap;
-		// inversion-on;
-	};
+    status = "okay";
+    oled: sh1106@3c {
+        compatible = "sinowealth,sh1106";
+        reg = <0x3c>;
+        width = <128>;
+        height = <64>;
+        segment-offset = <2>;
+        page-offset = <0>;
+        display-offset = <0>;
+        multiplex-ratio = <63>;
+        segment-remap;
+        com-invdir;
+        prechargep = <0x22>;
+    };
 };
